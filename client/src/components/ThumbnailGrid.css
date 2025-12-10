@@ -1,0 +1,40 @@
+.thumbnail-grid {
+  overflow-x: hidden;
+}
+
+/* Hide scrollbars on desktop */
+@media (min-width: 768px) {
+  .thumbnail-grid,
+  .thumbnail-grid > div {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+
+  .thumbnail-grid::-webkit-scrollbar,
+  .thumbnail-grid > div::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+}
+
+.grid-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+@media (max-width: 767px) {
+  .grid-cell {
+    padding: 1px;
+  }
+}
+
+.thumbnail-grid-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #999;
+  font-size: 1.125rem;
+}
+
