@@ -48,7 +48,7 @@ function ThumbnailItem({ item, size, onClick }: ThumbnailItemProps) {
         }
     };
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
         if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
             if (onClick) {
@@ -91,17 +91,8 @@ function ThumbnailItem({ item, size, onClick }: ThumbnailItemProps) {
                     headers.Authorization = `Bearer ${token}`;
                 }
 
-                console.log("Loading video preview:", videoPreviewUrl);
-
                 // Use arrayBuffer instead of blob to ensure we get all data
                 const response = await fetch(videoPreviewUrl, { headers });
-
-                console.log("Video preview response:", {
-                    status: response.status,
-                    ok: response.ok,
-                    contentType: response.headers.get("content-type"),
-                    contentLength: response.headers.get("content-length"),
-                });
 
                 if (!response.ok) {
                     const errorText = await response.text().catch(() => "");
@@ -116,13 +107,6 @@ function ThumbnailItem({ item, size, onClick }: ThumbnailItemProps) {
 
                 // Read as arrayBuffer to ensure we get all data
                 const arrayBuffer = await response.arrayBuffer();
-
-                console.log("Video preview arrayBuffer:", {
-                    size: arrayBuffer.byteLength,
-                    expectedSize,
-                    contentType: response.headers.get("content-type"),
-                    url: videoPreviewUrl,
-                });
 
                 if (arrayBuffer.byteLength === 0) {
                     console.error("Empty video arrayBuffer received");
@@ -226,7 +210,8 @@ function ThumbnailItem({ item, size, onClick }: ThumbnailItemProps) {
     }, [isImage, fileUrl]);
 
     return (
-        <div
+        <button
+            type="button"
             className="thumbnail-item"
             style={{ width: size, height: size }}
             onClick={handleClick}
@@ -304,7 +289,7 @@ function ThumbnailItem({ item, size, onClick }: ThumbnailItemProps) {
                     </span>
                 </span>
             </div>
-        </div>
+        </button>
     );
 }
 

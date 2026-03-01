@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import { FixedSizeGrid as Grid } from "react-window";
+import type { CellComponentProps } from "react-window";
+import { Grid } from "react-window";
 import type { FileItem } from "../types/index.js";
 import ThumbnailItem from "./ThumbnailItem.tsx";
 import "./ThumbnailGrid.css";
@@ -39,15 +40,7 @@ function ThumbnailGrid({
         return width / columnCount;
     }, [width, columnCount]);
 
-    const Cell = ({
-        columnIndex,
-        rowIndex,
-        style,
-    }: {
-        columnIndex: number;
-        rowIndex: number;
-        style: React.CSSProperties;
-    }) => {
+    const Cell = ({ ariaAttributes, columnIndex, rowIndex, style }: CellComponentProps) => {
         const index = rowIndex * columnCount + columnIndex;
         if (index >= items.length) {
             return <div style={style} />;
@@ -57,7 +50,7 @@ function ThumbnailGrid({
         const thumbnail = thumbnails[item.path];
 
         return (
-            <div style={style} className="grid-cell">
+            <div {...ariaAttributes} style={style} className="grid-cell">
                 <ThumbnailItem
                     item={item}
                     thumbnail={thumbnail}
@@ -80,15 +73,15 @@ function ThumbnailGrid({
         <Grid
             key={`grid-${size}-${width}-${height}`}
             className="thumbnail-grid"
+            cellComponent={Cell}
+            cellProps={{}}
             columnCount={columnCount}
             columnWidth={columnWidth}
             height={height}
             rowCount={rowCount}
             rowHeight={itemHeight}
             width={width}
-        >
-            {Cell}
-        </Grid>
+        />
     );
 }
 

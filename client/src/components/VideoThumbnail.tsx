@@ -131,7 +131,8 @@ function VideoThumbnail({
 
     if (error || !videoUrl) {
         return (
-            <div
+            <button
+                type="button"
                 className="video-thumbnail-error"
                 style={{ width, height }}
                 onClick={onClick}
@@ -139,7 +140,7 @@ function VideoThumbnail({
                 onKeyDown={handleKeyDown}
             >
                 <span>{loading ? "Loading..." : "Video Preview"}</span>
-            </div>
+            </button>
         );
     }
 
