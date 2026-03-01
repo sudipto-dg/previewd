@@ -296,7 +296,14 @@ function ThumbnailItem({ item, size, onClick }: ThumbnailItemProps) {
                     </div>
                 )}
             </div>
-            <div className="thumbnail-label">{item.name}</div>
+            <div className="thumbnail-label">
+                <span className="thumbnail-label-track">
+                    <span className="thumbnail-label-text">{item.name}</span>
+                    <span className="thumbnail-label-text" aria-hidden="true">
+                        {item.name}
+                    </span>
+                </span>
+            </div>
         </div>
     );
 }

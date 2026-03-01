@@ -70,11 +70,36 @@
     width: 100%;
     margin-top: 4px;
     font-size: 0.75rem;
-    text-align: center;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     color: #333;
+}
+
+.thumbnail-label-track {
+    display: inline-flex;
+    align-items: center;
+    min-width: 100%;
+    white-space: nowrap;
+    animation: thumbnail-marquee 10s linear infinite;
+}
+
+.thumbnail-label-text {
+    display: inline-block;
+    padding-right: 2rem;
+}
+
+@keyframes thumbnail-marquee {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .thumbnail-label-track {
+        animation: none;
+    }
 }
 
 @media (max-width: 767px) {
