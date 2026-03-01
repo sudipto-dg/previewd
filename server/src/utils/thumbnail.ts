@@ -6,7 +6,7 @@ import ffprobeInstaller from "@ffprobe-installer/ffprobe";
 import ffmpeg from "fluent-ffmpeg";
 import sharp from "sharp";
 import { getCache, getCacheKey } from "./cache.js";
-import { getConfig } from "./configLoader.js";
+import { DEFAULT_VIDEO_PREVIEW_DURATION, getConfig } from "./configLoader.js";
 import { getCachedThumbnail, saveThumbnailToCache } from "./thumbnailCache.js";
 
 // Configure fluent-ffmpeg to use the bundled FFmpeg binary
@@ -197,12 +197,12 @@ function getVideoDuration(filePath: string): Promise<number> {
 }
 
 /**
- * Generate a short video preview clip (15 seconds) from the middle of a video file
+ * Generate a short video preview clip from the middle of a video file
  * Returns the path to the generated preview clip file
  */
 export async function generateVideoPreviewClip(
     filePath: string,
-    durationSeconds = 15,
+    durationSeconds = DEFAULT_VIDEO_PREVIEW_DURATION,
     startTimeSeconds?: number
 ): Promise<string> {
     // Store previews in project directory instead of temp

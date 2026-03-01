@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { getConfig } from "./configLoader.js";
+import { DEFAULT_VIDEO_PREVIEW_DURATION, getConfig } from "./configLoader.js";
 import { generateVideoPreviewClip } from "./thumbnail.js";
 
 const VIDEO_EXTENSIONS = [".mp4", ".avi", ".mov", ".mkv", ".webm", ".flv", ".wmv", ".m4v", ".3gp"];
@@ -10,7 +10,7 @@ const VIDEO_EXTENSIONS = [".mp4", ".avi", ".mov", ".mkv", ".webm", ".flv", ".wmv
  */
 export async function pregenerateVideoPreviewsForFolder(
     folderPath: string,
-    previewDuration = 15,
+    previewDuration = DEFAULT_VIDEO_PREVIEW_DURATION,
     onProgress?: (current: number, total: number, currentFile: string) => void
 ): Promise<void> {
     const videoFiles: string[] = [];
@@ -88,7 +88,7 @@ export async function pregenerateVideoPreviews(
     onProgress?: (folder: string, current: number, total: number) => void
 ): Promise<void> {
     const config = getConfig();
-    const previewDuration = config.video.previewDuration || 15;
+    const previewDuration = config.video.previewDuration ?? DEFAULT_VIDEO_PREVIEW_DURATION;
 
     for (const folder of config.folders) {
         if (!folder.enabled) {

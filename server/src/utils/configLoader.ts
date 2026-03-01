@@ -3,6 +3,7 @@ import path from "node:path";
 import type { Config } from "../types/index.js";
 
 let cachedConfig: Config | null = null;
+export const DEFAULT_VIDEO_PREVIEW_DURATION = 15;
 
 export function getConfig(): Config {
     if (cachedConfig) {
@@ -26,7 +27,7 @@ export function getConfig(): Config {
                 cache: { enabled: true, ttl: 86400, maxSize: 1000 },
             },
             video: {
-                previewDuration: 15,
+                previewDuration: DEFAULT_VIDEO_PREVIEW_DURATION,
                 loop: true,
                 thumbnailTime: 1,
             },

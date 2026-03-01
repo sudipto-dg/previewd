@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import type { FastifyInstance } from "fastify";
 import type { BrowseResponse, FileItem } from "../types/index.js";
-import { getConfig } from "../utils/configLoader.js";
+import { DEFAULT_VIDEO_PREVIEW_DURATION, getConfig } from "../utils/configLoader.js";
 import { validatePath } from "../utils/pathValidator.js";
 import { generateVideoPreviewClip } from "../utils/thumbnail.js";
 
@@ -430,7 +430,8 @@ export default async function filesRoutes(fastify: FastifyInstance) {
                 }
 
                 // Generate or get cached preview clip
-                const previewDuration = config.video.previewDuration || 15;
+                const previewDuration =
+                    config.video.previewDuration ?? DEFAULT_VIDEO_PREVIEW_DURATION;
 
                 let previewPath: string;
                 try {
