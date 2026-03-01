@@ -1,5 +1,5 @@
 {
-    "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+    "$schema": "https://biomejs.dev/schemas/2.4.4/schema.json",
     "vcs": {
         "enabled": true,
         "clientKind": "git",
@@ -7,7 +7,7 @@
     },
     "files": {
         "ignoreUnknown": false,
-        "ignore": ["node_modules/**", "dist/**", "build/**", ".next/**", "coverage/**"]
+        "includes": ["**", "!node_modules", "!dist", "!build", "!.next", "!coverage"]
     },
     "formatter": {
         "enabled": true,
@@ -15,16 +15,13 @@
         "indentWidth": 4,
         "lineWidth": 100
     },
-    "organizeImports": {
-        "enabled": true
-    },
     "linter": {
         "enabled": true,
         "rules": {
             "recommended": true,
             "complexity": {
                 "noExtraBooleanCast": "error",
-                "noMultipleSpacesInRegularExpressionLiterals": "error",
+                "noAdjacentSpacesInRegex": "error",
                 "noUselessCatch": "error",
                 "noUselessTypeConstraint": "error"
             },
@@ -56,7 +53,7 @@
     },
     "overrides": [
         {
-            "include": ["client/src/**"],
+            "includes": ["client/src/**"],
             "linter": {
                 "rules": {
                     "a11y": {
