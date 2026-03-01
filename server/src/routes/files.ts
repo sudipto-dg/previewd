@@ -317,7 +317,12 @@ export default async function filesRoutes(fastify: FastifyInstance) {
                     // Handle stream errors
                     fileStream.on("error", (err) => {
                         // Only log errors if request wasn't aborted (abort is expected for video seeking)
-                        if (!requestAborted && !reply.sent && !reply.raw.destroyed) {
+                        if (
+                            !requestAborted &&
+                            !reply.sent &&
+                            !reply.raw.destroyed &&
+                            !reply.raw.headersSent
+                        ) {
                             fastify.log.warn({ err }, "File stream error");
                             reply.raw.statusCode = 500;
                             reply.raw.end(JSON.stringify({ error: "Failed to stream file" }));
@@ -340,6 +345,7 @@ export default async function filesRoutes(fastify: FastifyInstance) {
                     // Send stream using reply.raw directly to bypass Fastify's stream logging
                     // This prevents "stream closed prematurely" warnings for aborted video requests
                     // which are expected behavior when users seek through videos
+                    reply.hijack();
                     reply.raw.writeHead(206, {
                         "Content-Range": `bytes ${start}-${end}/${fileSize}`,
                         "Accept-Ranges": "bytes",
@@ -348,7 +354,7 @@ export default async function filesRoutes(fastify: FastifyInstance) {
                     });
 
                     fileStream.pipe(reply.raw);
-                    reply.sent = true;
+                    return;
                 } else {
                     // Send entire file
                     const fileStream = fs.createReadStream(validation.resolvedPath);
@@ -384,6 +390,9 @@ export default async function filesRoutes(fastify: FastifyInstance) {
                 }
             } catch (error) {
                 fastify.log.error({ err: error }, "Error serving file");
+                if (reply.sent || reply.raw.headersSent) {
+                    return;
+                }
                 return reply.status(500).send({ error: "Failed to serve file" });
             }
         }
