@@ -1,75 +1,74 @@
 .pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.75rem;
-  background-color: white;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  flex-wrap: wrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    flex-wrap: wrap;
 }
 
 @media (min-width: 768px) {
-  .pagination {
-    padding: 1rem;
-    flex-wrap: nowrap;
-  }
+    .pagination {
+        padding: 1rem;
+        flex-wrap: nowrap;
+    }
 }
 
 .pagination-button {
-  padding: 0.5rem 1rem;
-  background-color: #667eea;
-  color: white;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: background-color 0.2s;
-  min-height: 44px;
-  min-width: 44px;
+    padding: 0.5rem 1rem;
+    background-color: #667eea;
+    color: white;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    min-height: 44px;
+    min-width: 44px;
 }
 
 .pagination-button:hover:not(:disabled) {
-  background-color: #5568d3;
+    background-color: #5568d3;
 }
 
 .pagination-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+    background-color: #ccc;
+    cursor: not-allowed;
 }
 
 .pagination-numbers {
-  display: flex;
-  gap: 0.25rem;
+    display: flex;
+    gap: 0.25rem;
 }
 
 .pagination-number {
-  min-width: 44px;
-  height: 44px;
-  padding: 0.5rem;
-  background-color: #f5f5f5;
-  color: #333;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  transition: background-color 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    min-width: 44px;
+    height: 44px;
+    padding: 0.5rem;
+    background-color: #f5f5f5;
+    color: #333;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .pagination-number:hover {
-  background-color: #e0e0e0;
+    background-color: #e0e0e0;
 }
 
 .pagination-number.active {
-  background-color: #667eea;
-  color: white;
+    background-color: #667eea;
+    color: white;
 }
 
 .pagination-ellipsis {
-  display: flex;
-  align-items: center;
-  padding: 0 0.5rem;
-  color: #999;
+    display: flex;
+    align-items: center;
+    padding: 0 0.5rem;
+    color: #999;
 }
-

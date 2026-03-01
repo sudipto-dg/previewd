@@ -1,33 +1,29 @@
 {
-  "name": "local-network-file-browser",
-  "version": "1.0.0",
-  "description": "Local Network File Browser with Thumbnails",
-  "private": true,
-  "engines": {
-    "node": "24.11.1"
-  },
-  "scripts": {
-    "dev": "echo \"Run servers separately: Terminal 1: npm run dev:server | Terminal 2: npm run dev:client\"",
-    "dev:server": "cd server && npm run dev",
-    "dev:client": "cd client && npm run dev",
-    "build": "npm run build:server && npm run build:client",
-    "build:server": "cd server && npm run build",
-    "build:client": "cd client && npm run build",
-    "lint": "npm run lint:server && npm run lint:client",
-    "lint:server": "cd server && npm run lint",
-    "lint:client": "cd client && npm run lint",
-    "format": "npm run format:server && npm run format:client",
-    "format:server": "cd server && npm run format",
-    "format:client": "cd client && npm run format",
-    "format:check": "npm run format:check:server && npm run format:check:client",
-    "format:check:server": "cd server && npm run format:check",
-    "format:check:client": "cd client && npm run format:check",
-    "check": "npm run lint && npm run format:check"
-  },
-  "devDependencies": {},
-  "workspaces": [
-    "server",
-    "client"
-  ]
+    "name": "local-network-file-browser",
+    "version": "1.0.0",
+    "description": "Local Network File Browser with Thumbnails",
+    "private": true,
+    "engines": {
+        "node": "24.11.1"
+    },
+    "scripts": {
+        "dev": "echo \"Run servers separately: Terminal 1: npm run dev:server | Terminal 2: npm run dev:client\"",
+        "dev:server": "cd server && npm run dev",
+        "dev:client": "cd client && npm run dev",
+        "build": "npm run build:server && npm run build:client",
+        "build:server": "cd server && npm run build",
+        "build:client": "cd client && npm run build",
+        "lint": "npm run lint:server && npm run lint:client",
+        "lint:server": "cd server && npm run lint",
+        "lint:client": "cd client && npm run lint",
+        "format": "npm run format:server && npm run format:client",
+        "format:server": "cd server && npm run format",
+        "format:client": "cd client && npm run format",
+        "format:check": "npm run format:check:server && npm run format:check:client",
+        "format:check:server": "cd server && npm run format:check",
+        "format:check:client": "cd client && npm run format:check",
+        "check": "npm run lint && npm run format:check"
+    },
+    "devDependencies": {},
+    "workspaces": ["server", "client"]
 }
-

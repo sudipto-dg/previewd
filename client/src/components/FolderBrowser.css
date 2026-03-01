@@ -1,192 +1,191 @@
 .folder-browser {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  background-color: #f5f5f5;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #f5f5f5;
 }
 
 .folder-browser-header {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding: 1rem;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 10;
 }
 
 @media (min-width: 768px) {
-  .folder-browser-header {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
-  }
+    .folder-browser-header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+    }
 }
 
 .folder-browser-header h1 {
-  font-size: 1.25rem;
-  color: #333;
-  margin: 0;
+    font-size: 1.25rem;
+    color: #333;
+    margin: 0;
 }
 
 @media (min-width: 768px) {
-  .folder-browser-header h1 {
-    font-size: 1.5rem;
-  }
+    .folder-browser-header h1 {
+        font-size: 1.5rem;
+    }
 }
 
 .header-controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem;
-  width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
 }
 
 @media (min-width: 768px) {
-  .header-controls {
-    width: auto;
-    flex-wrap: nowrap;
-    gap: 1rem;
-  }
+    .header-controls {
+        width: auto;
+        flex-wrap: nowrap;
+        gap: 1rem;
+    }
 }
 
 /* Ensure slider takes full width on mobile when it wraps */
 @media (max-width: 767px) {
-  .header-controls > .thumbnail-size-slider {
-    order: -1;
-    width: 100%;
-    margin-bottom: 0.5rem;
-  }
+    .header-controls > .thumbnail-size-slider {
+        order: -1;
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
 }
 
 .sort-select {
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background-color: white;
-  font-size: 0.875rem;
-  min-height: 44px;
-  flex: 1;
-  min-width: 120px;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+    font-size: 0.875rem;
+    min-height: 44px;
+    flex: 1;
+    min-width: 120px;
 }
 
 @media (min-width: 768px) {
-  .sort-select {
-    flex: none;
-    min-width: auto;
-  }
+    .sort-select {
+        flex: none;
+        min-width: auto;
+    }
 }
 
 .sort-order-button {
-  padding: 0.5rem 0.75rem;
-  background-color: #667eea;
-  color: white;
-  border-radius: 4px;
-  font-size: 1rem;
-  font-weight: 600;
-  min-height: 44px;
-  min-width: 44px;
+    padding: 0.5rem 0.75rem;
+    background-color: #667eea;
+    color: white;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    min-height: 44px;
+    min-width: 44px;
 }
 
 .sort-order-button:hover {
-  background-color: #5568d3;
+    background-color: #5568d3;
 }
 
 .config-link {
-  padding: 0.5rem 1rem;
-  background-color: #28a745;
-  color: white;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: background-color 0.2s;
+    padding: 0.5rem 1rem;
+    background-color: #28a745;
+    color: white;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background-color 0.2s;
 }
 
 .config-link:hover {
-  background-color: #218838;
+    background-color: #218838;
 }
 
 .logout-button {
-  padding: 0.5rem 1rem;
-  background-color: #dc3545;
-  color: white;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: background-color 0.2s;
-  min-height: 44px;
-  white-space: nowrap;
+    padding: 0.5rem 1rem;
+    background-color: #dc3545;
+    color: white;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    min-height: 44px;
+    white-space: nowrap;
 }
 
 .logout-button:hover {
-  background-color: #c82333;
+    background-color: #c82333;
 }
 
 .breadcrumbs {
-  padding: 0.5rem 0.75rem;
-  background-color: white;
-  border-bottom: 1px solid #e0e0e0;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.125rem;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+    padding: 0.5rem 0.75rem;
+    background-color: white;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.125rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 @media (min-width: 768px) {
-  .breadcrumbs {
-    padding: 0.5rem 1.5rem;
-  }
+    .breadcrumbs {
+        padding: 0.5rem 1.5rem;
+    }
 }
 
 .breadcrumb-item {
-  padding: 0.25rem 0.5rem;
-  background-color: #f0f0f0;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  color: #667eea;
-  transition: background-color 0.2s;
-  min-height: 28px;
-  white-space: nowrap;
+    padding: 0.25rem 0.5rem;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    color: #667eea;
+    transition: background-color 0.2s;
+    min-height: 28px;
+    white-space: nowrap;
 }
 
 .breadcrumb-item:hover {
-  background-color: #e0e0e0;
+    background-color: #e0e0e0;
 }
 
 .breadcrumb-separator {
-  margin: 0 0.25rem;
-  color: #999;
+    margin: 0 0.25rem;
+    color: #999;
 }
 
 .thumbnail-container {
-  flex: 1;
-  overflow: hidden;
-  padding: 0.125rem;
+    flex: 1;
+    overflow: hidden;
+    padding: 0.125rem;
 }
 
 @media (min-width: 768px) {
-  .thumbnail-container {
-    padding: 0.5rem;
-  }
+    .thumbnail-container {
+        padding: 0.5rem;
+    }
 }
 
 .loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  font-size: 1.125rem;
-  color: #999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 1.125rem;
+    color: #999;
 }
 
 .error-message {
-  padding: 2rem;
-  text-align: center;
-  color: #e74c3c;
-  font-size: 1.125rem;
+    padding: 2rem;
+    text-align: center;
+    color: #e74c3c;
+    font-size: 1.125rem;
 }
-
