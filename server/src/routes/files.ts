@@ -453,7 +453,7 @@ export default async function filesRoutes(fastify: FastifyInstance) {
 
         // Generate or get cached preview clip
         const serverConfig = getConfig();
-        const previewDuration = serverConfig.video.previewDuration || 10;
+        const previewDuration = serverConfig.video.previewDuration || 15;
 
         let previewPath: string;
         try {

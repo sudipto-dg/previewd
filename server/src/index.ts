@@ -49,28 +49,25 @@ async function startServer() {
         if (current % 10 === 0 || current === total) {
           server.log.info(
             { folder, progress: `${current}/${total}` },
-            "Video preview generation progress",
+            "Video preview generation progress"
           );
         }
       });
 
       const duration = ((Date.now() - startTime) / 1000).toFixed(2);
-      server.log.info(
-        { duration: `${duration}s` },
-        "Video preview pre-generation completed",
-      );
+      server.log.info({ duration: `${duration}s` }, "Video preview pre-generation completed");
     } catch (error) {
       server.log.error({ err: error }, "Error during video preview pre-generation");
     }
   };
 
   // Start pre-generation in background (don't block server startup)
-  // pregeneratePreviews().catch((err) => {
-  //   server.log.error({ err }, "Error during video preview pre-generation");
-  // });
+  pregeneratePreviews().catch((err) => {
+    server.log.error({ err }, "Error during video preview pre-generation");
+  });
 
   // Start server
-  const port = parseInt(process.env.SERVER_PORT || "3000", 10);
+  const port = Number.parseInt(process.env.SERVER_PORT || "3000", 10);
   const host = process.env.SERVER_HOST || "0.0.0.0";
 
   try {
@@ -86,4 +83,3 @@ startServer().catch((err) => {
   console.error("Failed to start server:", err);
   process.exit(1);
 });
-

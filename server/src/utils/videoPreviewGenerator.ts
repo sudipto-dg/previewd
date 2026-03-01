@@ -20,7 +20,7 @@ const VIDEO_EXTENSIONS = [
  */
 export async function pregenerateVideoPreviewsForFolder(
   folderPath: string,
-  previewDuration: number = 10,
+  previewDuration: number = 15,
   onProgress?: (current: number, total: number, currentFile: string) => void,
 ): Promise<void> {
   const videoFiles: string[] = [];
@@ -98,7 +98,7 @@ export async function pregenerateVideoPreviews(
   onProgress?: (folder: string, current: number, total: number) => void,
 ): Promise<void> {
   const config = getConfig();
-  const previewDuration = config.video.previewDuration || 10;
+  const previewDuration = config.video.previewDuration || 15;
 
   for (const folder of config.folders) {
     if (!folder.enabled) {

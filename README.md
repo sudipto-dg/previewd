@@ -33,10 +33,7 @@ previewd/
 ## Prerequisites
 
 - Node.js 18+ and npm
-- FFmpeg (for video thumbnail generation)
-  - Windows: Download from [ffmpeg.org](https://ffmpeg.org/download.html) and add to PATH
-  - macOS: `brew install ffmpeg`
-  - Linux: `sudo apt-get install ffmpeg` or `sudo yum install ffmpeg`
+- FFmpeg is automatically installed via npm (no manual installation required)
 
 ## Setup
 

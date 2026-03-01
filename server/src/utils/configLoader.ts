@@ -26,7 +26,7 @@ export function getConfig(): Config {
         cache: { enabled: true, ttl: 86400, maxSize: 1000 },
       },
       video: {
-        previewDuration: 10,
+        previewDuration: 15,
         loop: true,
         thumbnailTime: 1,
       },

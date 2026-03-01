@@ -17,7 +17,7 @@
     }
   },
   "video": {
-    "previewDuration": 10,
+    "previewDuration": 15,
     "loop": true,
     "thumbnailTime": 1
   },

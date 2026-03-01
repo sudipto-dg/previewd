@@ -3,12 +3,29 @@ import path from "node:path";
 import os from "node:os";
 import sharp from "sharp";
 import ffmpeg from "fluent-ffmpeg";
+import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
+import ffprobeInstaller from "@ffprobe-installer/ffprobe";
 import { getCache, getCacheKey } from "./cache.js";
 import { getConfig } from "./configLoader.js";
-import {
-  getCachedThumbnail,
-  saveThumbnailToCache,
-} from "./thumbnailCache.js";
+import { getCachedThumbnail, saveThumbnailToCache } from "./thumbnailCache.js";
+
+// Configure fluent-ffmpeg to use the bundled FFmpeg binary
+try {
+  ffmpeg.setFfmpegPath(ffmpegInstaller.path);
+} catch (error) {
+  console.error("Failed to set FFmpeg path:", error);
+  throw new Error("FFmpeg binary not found. Please ensure @ffmpeg-installer/ffmpeg is installed.");
+}
+
+// Configure fluent-ffmpeg to use the bundled ffprobe binary
+try {
+  ffmpeg.setFfprobePath(ffprobeInstaller.path);
+} catch (error) {
+  console.error("Failed to set ffprobe path:", error);
+  throw new Error(
+    "ffprobe binary not found. Please ensure @ffprobe-installer/ffprobe is installed."
+  );
+}
 
 const IMAGE_EXTENSIONS = [
   ".jpg",
@@ -21,17 +38,7 @@ const IMAGE_EXTENSIONS = [
   ".tiff",
   ".ico",
 ];
-const VIDEO_EXTENSIONS = [
-  ".mp4",
-  ".avi",
-  ".mov",
-  ".mkv",
-  ".webm",
-  ".flv",
-  ".wmv",
-  ".m4v",
-  ".3gp",
-];
+const VIDEO_EXTENSIONS = [".mp4", ".avi", ".mov", ".mkv", ".webm", ".flv", ".wmv", ".m4v", ".3gp"];
 
 function isImage(filePath: string): boolean {
   const ext = path.extname(filePath).toLowerCase();
@@ -46,7 +53,7 @@ function isVideo(filePath: string): boolean {
 async function generateImageThumbnail(
   filePath: string,
   width: number,
-  height: number,
+  height: number
 ): Promise<string> {
   const buffer = await sharp(filePath)
     .resize(width, height, {
@@ -63,13 +70,10 @@ async function generateVideoThumbnail(
   filePath: string,
   width: number,
   height: number,
-  timeSeconds: number = 1,
+  timeSeconds: number = 1
 ): Promise<string> {
   return new Promise((resolve, reject) => {
-    const tempOutput = path.join(
-      os.tmpdir(),
-      `thumb_${Date.now()}.jpg`,
-    );
+    const tempOutput = path.join(os.tmpdir(), `thumb_${Date.now()}.jpg`);
 
     ffmpeg(filePath)
       .screenshots({
@@ -110,7 +114,7 @@ export async function generateThumbnail(
   filePath: string,
   width: number = 300,
   height: number = 300,
-  videoTimeSeconds?: number,
+  videoTimeSeconds?: number
 ): Promise<string> {
   const config = getConfig();
   const cache = getCache();
@@ -156,10 +160,7 @@ export async function generateThumbnail(
   return thumbnail;
 }
 
-function generatePlaceholderThumbnail(
-  width: number,
-  height: number,
-): string {
+function generatePlaceholderThumbnail(width: number, height: number): string {
   // Generate a simple placeholder image
   const svg = `
     <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
@@ -194,18 +195,17 @@ function getVideoDuration(filePath: string): Promise<number> {
 }
 
 /**
- * Generate a short video preview clip (10 seconds) from the middle of a video file
+ * Generate a short video preview clip (15 seconds) from the middle of a video file
  * Returns the path to the generated preview clip file
  */
 export async function generateVideoPreviewClip(
   filePath: string,
-  durationSeconds: number = 10,
-  startTimeSeconds?: number,
+  durationSeconds: number = 15,
+  startTimeSeconds?: number
 ): Promise<string> {
-  const config = getConfig();
   // Store previews in project directory instead of temp
   const previewDir = path.join(process.cwd(), ".video-previews");
-  
+
   // Ensure preview directory exists
   if (!fs.existsSync(previewDir)) {
     fs.mkdirSync(previewDir, { recursive: true });
@@ -214,24 +214,26 @@ export async function generateVideoPreviewClip(
   // Get video duration and calculate start time from middle
   let actualStartTime: number;
   let actualDuration: number;
-  
+
   try {
     const videoDuration = await getVideoDuration(filePath);
     console.log(`Video duration: ${videoDuration} seconds`);
-    
+
     // Calculate start time from middle: (duration / 2) - (previewDuration / 2)
     // Ensure we don't go negative
-    const middleStart = Math.max(0, (videoDuration / 2) - (durationSeconds / 2));
+    const middleStart = Math.max(0, videoDuration / 2 - durationSeconds / 2);
     actualStartTime = startTimeSeconds !== undefined ? startTimeSeconds : middleStart;
     actualDuration = Math.min(durationSeconds, videoDuration - actualStartTime);
-    
+
     // If video is shorter than requested duration, start from beginning
     if (actualDuration < durationSeconds) {
       actualStartTime = 0;
       actualDuration = Math.min(durationSeconds, videoDuration);
     }
-    
-    console.log(`Preview: start=${actualStartTime.toFixed(2)}s, duration=${actualDuration.toFixed(2)}s`);
+
+    console.log(
+      `Preview: start=${actualStartTime.toFixed(2)}s, duration=${actualDuration.toFixed(2)}s`
+    );
   } catch (error) {
     console.warn(`Failed to get video duration, using defaults: ${error}`);
     // Fallback to provided startTime or default
@@ -245,7 +247,7 @@ export async function generateVideoPreviewClip(
   const fileHash = crypto.createHash("md5").update(filePath).digest("hex");
   const previewPath = path.join(
     previewDir,
-    `preview_${fileHash}_${Math.round(actualStartTime)}_${Math.round(actualDuration)}.mp4`,
+    `preview_${fileHash}_${Math.round(actualStartTime)}_${Math.round(actualDuration)}.mp4`
   );
 
   // Check if preview already exists and has content
@@ -265,7 +267,7 @@ export async function generateVideoPreviewClip(
       return;
     }
 
-    const ffmpegProcess = ffmpeg(filePath)
+    ffmpeg(filePath)
       .setStartTime(actualStartTime)
       .setDuration(actualDuration)
       .videoCodec("libx264")
@@ -291,7 +293,7 @@ export async function generateVideoPreviewClip(
             reject(new Error("Preview clip file was not created"));
             return;
           }
-          
+
           const stats = fs.statSync(previewPath);
           if (stats.size === 0) {
             // Clean up empty file
@@ -299,7 +301,7 @@ export async function generateVideoPreviewClip(
             reject(new Error("Generated preview clip is empty"));
             return;
           }
-          
+
           console.log(`Preview clip generated successfully: ${previewPath} (${stats.size} bytes)`);
           resolve(previewPath);
         } catch (error) {
@@ -310,7 +312,7 @@ export async function generateVideoPreviewClip(
         console.error("FFmpeg error:", err);
         console.error("FFmpeg stdout:", stdout);
         console.error("FFmpeg stderr:", stderr);
-        
+
         // Clean up on error
         if (fs.existsSync(previewPath)) {
           try {
@@ -324,4 +326,3 @@ export async function generateVideoPreviewClip(
       .run();
   });
 }
-
