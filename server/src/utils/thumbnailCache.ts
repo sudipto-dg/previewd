@@ -1,7 +1,6 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import { getConfig } from "./configLoader.js";
 
 const CACHE_DIR_NAME = ".thumbnail-cache";
 

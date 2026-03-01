@@ -295,22 +295,20 @@ function FolderBrowser() {
             ) : error ? (
                 <div className="error-message">{error}</div>
             ) : (
-                <>
-                    <div className="thumbnail-container">
-                        <AutoSizer>
-                            {({ width, height }) => (
-                                <ThumbnailGrid
-                                    items={items}
-                                    thumbnails={{}}
-                                    size={thumbnailSize}
-                                    width={width}
-                                    height={height}
-                                    onItemClick={handleItemClick}
-                                />
-                            )}
-                        </AutoSizer>
-                    </div>
-                </>
+                <div className="thumbnail-container">
+                    <AutoSizer>
+                        {({ width, height }) => (
+                            <ThumbnailGrid
+                                items={items}
+                                thumbnails={{}}
+                                size={thumbnailSize}
+                                width={width}
+                                height={height}
+                                onItemClick={handleItemClick}
+                            />
+                        )}
+                    </AutoSizer>
+                </div>
             )}
         </div>
     );

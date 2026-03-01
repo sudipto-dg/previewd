@@ -1,5 +1,4 @@
 import NodeCache from "node-cache";
-import type { Config } from "../types/index.js";
 import { getConfig } from "./configLoader.js";
 
 let thumbnailCache: NodeCache | null = null;

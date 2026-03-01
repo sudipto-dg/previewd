@@ -15,6 +15,47 @@ interface ThumbnailGridProps {
     onItemClick?: (item: FileItem) => void;
 }
 
+async function copyTextToClipboard(text: string): Promise<void> {
+    if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return;
+    }
+
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.setAttribute("readonly", "");
+    textArea.style.position = "fixed";
+    textArea.style.opacity = "0";
+    textArea.style.pointerEvents = "none";
+    textArea.style.left = "-9999px";
+
+    document.body.appendChild(textArea);
+
+    const selection = document.getSelection();
+    const selectedRange = selection && selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
+
+    textArea.focus();
+    textArea.select();
+    textArea.setSelectionRange(0, text.length);
+
+    let copied = false;
+
+    try {
+        copied = document.execCommand("copy");
+    } finally {
+        document.body.removeChild(textArea);
+
+        if (selectedRange && selection) {
+            selection.removeAllRanges();
+            selection.addRange(selectedRange);
+        }
+    }
+
+    if (!copied) {
+        throw new Error("Clipboard copy is not supported in this browser context");
+    }
+}
+
 function ThumbnailGrid({
     items,
     thumbnails,
@@ -56,7 +97,7 @@ function ThumbnailGrid({
             event.stopPropagation();
             try {
                 const url = buildVideoFileUrl(item.path);
-                await navigator.clipboard.writeText(url);
+                await copyTextToClipboard(url);
             } catch (error) {
                 console.error("Failed to copy video link:", error);
             }
@@ -101,10 +142,9 @@ function ThumbnailGrid({
             cellProps={{}}
             columnCount={columnCount}
             columnWidth={columnWidth}
-            height={height}
             rowCount={rowCount}
             rowHeight={itemHeight}
-            width={width}
+            style={{ height, width }}
         />
     );
 }
