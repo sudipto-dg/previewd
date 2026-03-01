@@ -1,37 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { FastifyInstance } from "fastify";
-import type { BrowseResponse, Config, FileItem } from "../types/index.js";
+import type { BrowseResponse, FileItem } from "../types/index.js";
 import { getConfig } from "../utils/configLoader.js";
 import { validatePath } from "../utils/pathValidator.js";
 import { generateVideoPreviewClip } from "../utils/thumbnail.js";
 
 export default async function filesRoutes(fastify: FastifyInstance) {
-    // Load config
-    const configPath = path.join(process.cwd(), "src", "config", "folders.json");
-    let config: Config;
-
-    try {
-        const configData = fs.readFileSync(configPath, "utf-8");
-        config = JSON.parse(configData) as Config;
-    } catch (error) {
-        fastify.log.error({ err: error }, "Failed to load config");
-        config = {
-            folders: [],
-            thumbnail: {
-                maxWidth: 300,
-                maxHeight: 300,
-                quality: 80,
-                cache: { enabled: true, ttl: 86400, maxSize: 1000 },
-            },
-            video: {
-                previewDuration: 3,
-                loop: true,
-                thumbnailTime: 1,
-            },
-            pagination: { defaultLimit: 50, maxLimit: 200 },
-        };
-    }
+    const getCurrentConfig = () => getConfig();
 
     // GET /api/folders
     fastify.get(
@@ -59,6 +35,7 @@ export default async function filesRoutes(fastify: FastifyInstance) {
             },
         },
         async () => {
+            const config = getCurrentConfig();
             return {
                 folders: config.folders.filter((f) => f.enabled),
             };
@@ -120,6 +97,7 @@ export default async function filesRoutes(fastify: FastifyInstance) {
             },
         },
         async (request, reply) => {
+            const config = getCurrentConfig();
             const { path: dirPath } = request.query;
             const page = Number.parseInt(request.query.page || "1", 10);
             const limit = Math.min(
@@ -264,6 +242,7 @@ export default async function filesRoutes(fastify: FastifyInstance) {
             }
 
             const { path: filePath } = request.query;
+            const config = getCurrentConfig();
 
             const validation = validatePath(filePath, config);
             if (!validation.valid || !validation.resolvedPath) {
@@ -430,6 +409,7 @@ export default async function filesRoutes(fastify: FastifyInstance) {
         },
         async (request, reply) => {
             const { path: filePath } = request.query;
+            const config = getCurrentConfig();
 
             const validation = validatePath(filePath, config);
             if (!validation.valid || !validation.resolvedPath) {
@@ -450,8 +430,7 @@ export default async function filesRoutes(fastify: FastifyInstance) {
                 }
 
                 // Generate or get cached preview clip
-                const serverConfig = getConfig();
-                const previewDuration = serverConfig.video.previewDuration || 15;
+                const previewDuration = config.video.previewDuration || 15;
 
                 let previewPath: string;
                 try {

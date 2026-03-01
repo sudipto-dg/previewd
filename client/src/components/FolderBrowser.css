@@ -52,6 +52,30 @@
     }
 }
 
+.root-folder-select-label {
+    font-size: 0.875rem;
+    color: #444;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.root-folder-select {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+    font-size: 0.875rem;
+    min-height: 44px;
+    min-width: 180px;
+    flex: 1;
+}
+
+@media (min-width: 768px) {
+    .root-folder-select {
+        flex: none;
+    }
+}
+
 /* Ensure slider takes full width on mobile when it wraps */
 @media (max-width: 767px) {
     .header-controls > .thumbnail-size-slider {

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useThumbnailSize } from "../hooks/useThumbnailSize.js";
 import { apiService } from "../services/api.js";
@@ -9,21 +9,54 @@ import ThumbnailGrid from "./ThumbnailGrid.tsx";
 import ThumbnailSizeSlider from "./ThumbnailSizeSlider.tsx";
 import "./FolderBrowser.css";
 
+function normalizePath(value: string): string {
+    return value.replace(/\\/g, "/").replace(/\/+$/, "");
+}
+
+function isPathWithinRoot(candidatePath: string, rootPath: string): boolean {
+    const normalizedCandidate = normalizePath(candidatePath);
+    const normalizedRoot = normalizePath(rootPath);
+
+    if (!normalizedCandidate || !normalizedRoot) {
+        return false;
+    }
+
+    return (
+        normalizedCandidate === normalizedRoot ||
+        normalizedCandidate.startsWith(`${normalizedRoot}/`)
+    );
+}
+
+function getBestMatchingRoot(candidatePath: string, rootPaths: string[]): string | null {
+    const matches = rootPaths.filter((rootPath) => isPathWithinRoot(candidatePath, rootPath));
+    if (matches.length === 0) {
+        return null;
+    }
+
+    return matches.sort((a, b) => normalizePath(b).length - normalizePath(a).length)[0];
+}
+
 function FolderBrowser() {
     const [searchParams, setSearchParams] = useSearchParams();
+    const initialPathRef = useRef(searchParams.get("path") || "");
     const [folders, setFolders] = useState<Array<{ name: string; path: string; enabled: boolean }>>(
         []
     );
-    const [currentPath, setCurrentPath] = useState(() => {
-        return searchParams.get("path") || "";
-    });
+    const [selectedRootPath, setSelectedRootPath] = useState("");
+    const [currentPath, setCurrentPath] = useState(() => initialPathRef.current);
+    const currentPathRef = useRef(currentPath);
     const [items, setItems] = useState<FileItem[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [sortBy, setSortBy] = useState<"name" | "size" | "date" | "type">("name");
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+    const browseRequestIdRef = useRef(0);
 
     const { size: thumbnailSize, setSize: setThumbnailSize } = useThumbnailSize();
+
+    useEffect(() => {
+        currentPathRef.current = currentPath;
+    }, [currentPath]);
 
     // Load folders on mount
     useEffect(() => {
@@ -31,15 +64,42 @@ function FolderBrowser() {
             .getFolders()
             .then((data) => {
                 setFolders(data.folders);
-                if (data.folders.length > 0) {
-                    setCurrentPath((prevPath) => prevPath || data.folders[0].path);
-                }
+                if (data.folders.length === 0) return;
+
+                const availableRootPaths = data.folders.map((folder) => folder.path);
+                const matchedRoot =
+                    getBestMatchingRoot(initialPathRef.current, availableRootPaths) ||
+                    getBestMatchingRoot(currentPathRef.current, availableRootPaths) ||
+                    availableRootPaths[0];
+
+                setSelectedRootPath(matchedRoot);
+                setCurrentPath((prevPath) =>
+                    isPathWithinRoot(prevPath, matchedRoot)
+                        ? prevPath
+                        : initialPathRef.current || matchedRoot
+                );
             })
             .catch((err) => {
                 console.error("Failed to load folders:", err);
                 setError("Failed to load folders");
             });
     }, []);
+
+    // Keep selected root aligned with the current path when navigating.
+    useEffect(() => {
+        if (!currentPath || folders.length === 0) return;
+
+        const availableRootPaths = folders.map((folder) => folder.path);
+        const matchedRootPath = getBestMatchingRoot(currentPath, availableRootPaths);
+        if (!matchedRootPath) return;
+
+        const matchedRoot = folders.find(
+            (folder) => normalizePath(folder.path) === normalizePath(matchedRootPath)
+        );
+        if (matchedRoot && normalizePath(matchedRoot.path) !== normalizePath(selectedRootPath)) {
+            setSelectedRootPath(matchedRoot.path);
+        }
+    }, [currentPath, folders, selectedRootPath]);
 
     // Update URL when path changes
     useEffect(() => {
@@ -57,6 +117,7 @@ function FolderBrowser() {
     useEffect(() => {
         if (!currentPath) return;
 
+        const requestId = ++browseRequestIdRef.current;
         setLoading(true);
         setError(null);
 
@@ -68,13 +129,16 @@ function FolderBrowser() {
                 sortOrder,
             })
             .then((data) => {
+                if (browseRequestIdRef.current !== requestId) return;
                 setItems(data.items);
             })
             .catch((err) => {
+                if (browseRequestIdRef.current !== requestId) return;
                 console.error("Failed to browse directory:", err);
                 setError("Failed to load directory contents");
             })
             .finally(() => {
+                if (browseRequestIdRef.current !== requestId) return;
                 setLoading(false);
             });
     }, [currentPath, sortBy, sortOrder]);
@@ -97,18 +161,44 @@ function FolderBrowser() {
     };
 
     const breadcrumbs = useMemo(() => {
-        if (!currentPath) return [];
-        const parts = currentPath.split(/[/\\]/).filter(Boolean);
-        const crumbs: Array<{ name: string; path: string }> = [];
-        let current = "";
+        if (!currentPath || !selectedRootPath) return [];
 
-        for (const part of parts) {
-            current = current ? `${current}/${part}` : part;
-            crumbs.push({ name: part, path: current });
+        const normalizedCurrent = normalizePath(currentPath);
+        const normalizedRoot = normalizePath(selectedRootPath);
+
+        if (!normalizedCurrent || !normalizedRoot || normalizedCurrent === normalizedRoot) {
+            return [];
         }
 
+        if (!isPathWithinRoot(currentPath, selectedRootPath)) {
+            return [];
+        }
+
+        const relativePath = normalizedCurrent.slice(normalizedRoot.length).replace(/^\/+/, "");
+        const parts = relativePath ? relativePath.split("/") : [];
+        const crumbs: Array<{ name: string; path: string }> = [];
+        const separator = selectedRootPath.includes("\\") ? "\\" : "/";
+        const rootWithoutTrailingSeparator = selectedRootPath.replace(/[\\/]+$/, "");
+
+        parts.forEach((part, index) => {
+            const pathParts = parts.slice(0, index + 1);
+            crumbs.push({
+                name: part,
+                path: [rootWithoutTrailingSeparator, ...pathParts].join(separator),
+            });
+        });
+
         return crumbs;
-    }, [currentPath]);
+    }, [currentPath, selectedRootPath]);
+
+    const selectedRoot =
+        folders.find((folder) => normalizePath(folder.path) === normalizePath(selectedRootPath)) ||
+        null;
+
+    const handleRootChange = (rootPath: string) => {
+        setSelectedRootPath(rootPath);
+        setCurrentPath(rootPath);
+    };
 
     if (error && !currentPath) {
         return (
@@ -123,6 +213,26 @@ function FolderBrowser() {
             <header className="folder-browser-header">
                 <h1>File Browser</h1>
                 <div className="header-controls">
+                    <label className="root-folder-select-label" htmlFor="root-folder-select">
+                        Root folder
+                    </label>
+                    <select
+                        id="root-folder-select"
+                        value={selectedRootPath}
+                        onChange={(e) => handleRootChange(e.target.value)}
+                        className="root-folder-select"
+                        disabled={folders.length === 0}
+                    >
+                        {folders.length === 0 ? (
+                            <option value="">No folders configured</option>
+                        ) : (
+                            folders.map((folder) => (
+                                <option key={folder.path} value={folder.path}>
+                                    {folder.name}
+                                </option>
+                            ))
+                        )}
+                    </select>
                     <ThumbnailSizeSlider size={thumbnailSize} setSize={setThumbnailSize} />
                     <select
                         value={sortBy}
@@ -157,13 +267,13 @@ function FolderBrowser() {
             </header>
 
             <div className="breadcrumbs">
-                {folders.length > 0 && (
+                {selectedRoot && (
                     <button
                         type="button"
-                        onClick={() => handleBreadcrumbClick(folders[0].path)}
+                        onClick={() => handleBreadcrumbClick(selectedRoot.path)}
                         className="breadcrumb-item"
                     >
-                        {folders[0].name}
+                        {selectedRoot.name}
                     </button>
                 )}
                 {breadcrumbs.map((crumb) => (
