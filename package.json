@@ -24,6 +24,8 @@
         "format:check:client": "cd client && npm run format:check",
         "check": "npm run lint && npm run format:check"
     },
-    "devDependencies": {},
+    "devDependencies": {
+        "@biomejs/biome": "^1.9.4"
+    },
     "workspaces": ["server", "client"]
 }

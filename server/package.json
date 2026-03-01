@@ -29,7 +29,6 @@
         "sharp": "^0.33.5"
     },
     "devDependencies": {
-        "@biomejs/biome": "^1.9.4",
         "@types/bcrypt": "^5.0.2",
         "@types/fluent-ffmpeg": "^2.1.24",
         "@types/node": "^20.14.12",
