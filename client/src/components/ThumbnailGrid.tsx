@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import type { CellComponentProps } from "react-window";
 import { Grid } from "react-window";
 import type { FileItem } from "../types/index.js";
+import { buildVideoFileUrl, isVideoFile } from "../utils/fileOpener.js";
 import ThumbnailItem from "./ThumbnailItem.tsx";
 import "./ThumbnailGrid.css";
 
@@ -48,9 +49,32 @@ function ThumbnailGrid({
 
         const item = items[index];
         const thumbnail = thumbnails[item.path];
+        const showCopyButton = item.type === "file" && isVideoFile(item.path);
+
+        const handleCopyLink = async (event: React.MouseEvent<HTMLButtonElement>) => {
+            event.preventDefault();
+            event.stopPropagation();
+            try {
+                const url = buildVideoFileUrl(item.path);
+                await navigator.clipboard.writeText(url);
+            } catch (error) {
+                console.error("Failed to copy video link:", error);
+            }
+        };
 
         return (
             <div {...ariaAttributes} style={style} className="grid-cell">
+                {showCopyButton && (
+                    <button
+                        type="button"
+                        className="thumbnail-copy-link-button"
+                        onClick={handleCopyLink}
+                        aria-label="Copy video link"
+                        title="Copy video link"
+                    >
+                        Copy link
+                    </button>
+                )}
                 <ThumbnailItem
                     item={item}
                     thumbnail={thumbnail}
